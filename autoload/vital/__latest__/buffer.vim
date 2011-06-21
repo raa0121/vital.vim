@@ -8,26 +8,59 @@ set cpo&vim
 let s:Functor = vital#of('vital').import('Functor')
 
 
-function! s:jump_to(bufnr)
+" TODO: Move these functions to a module.
+function! s:__eventignore_call(callable, args)
+    set eventignore=all
+    try
+        return s:Functor.call(a:callable, a:args)
+    finally
+        set eventignore=
+    endtry
+endfunction
+function! s:__get_list(args, idx)
+    let V = a:args[a:idx]
+    if type(V) ==# type([])
+        throw '`V` is not List.'
+    endif
+    return V
+endfunction
+
+function! s:__get_sid()
+    return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze___get_sid$')
+endfunction
+let s:__SID = s:__get_sid()
+delfunction s:__get_sid
+
+
+function! s:jump_to(...)
+    return s:__eventignore_call(s:Functor.localfunc('__jump_to', s:__SID), a:000)
+endfunction
+function! s:__jump_to(bufnr)
     let winnr = bufwinnr(a:bufnr)
     if a:bufnr != bufnr('%') && winnr != -1
         execute winnr 'wincmd w'
     endif
 endfunction
 
-function! s:call_in(bufnr, callable)
-    set eventignore=all
+function! s:call_in(...)
+    return s:__eventignore_call(s:Functor.localfunc('__call_in', s:__SID), a:000)
+endfunction
+function! s:__call_in(bufnr, callable, ...)
+    let args = s:__get_list(a:000, 0)
     let save_bufnr = bufnr('%')
-    call s:jump_to(a:bufnr)
+    " Already `set eventignore=all`.
+    call s:__jump_to(a:bufnr)
     try
-        return s:Functor.call(a:callable, [])
+        return s:Functor.call(a:callable, args)
     finally
         call s:jump_to(save_bufnr)
-        set eventignore=
     endtry
 endfunction
 
-function! s:append_lines(lines)
+function! s:append_lines(bufnr, lines)
+    return s:call_in(a:bufnr, s:Functor.localfunc('__append_lines', s:__SID), [a:lines])
+endfunction
+function! s:__append_lines(lines)
     if type(a:lines) !=# type([])
         return s:append_lines([a:lines])
     endif
@@ -35,7 +68,7 @@ function! s:append_lines(lines)
 endfunction
 
 function! s:empty(bufnr)
-    return s:call_in(a:bufnr, function('s:__empty'))
+    return s:call_in(a:bufnr, s:Functor.localfunc('__empty', s:__SID))
 endfunction
 function! s:__empty()
     return line('$') <= 1 && getline(1) ==# ''
