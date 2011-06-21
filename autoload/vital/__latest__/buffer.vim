@@ -34,5 +34,12 @@ function! s:append_lines(lines)
     call setline(line('$') + 1, a:lines)
 endfunction
 
+function! s:empty(bufnr)
+    return s:call_in(a:bufnr, function('s:__empty'))
+endfunction
+function! s:__empty()
+    return line('$') <= 1 && getline(1) ==# ''
+endfunction
+
 
 let &cpo = s:save_cpo
