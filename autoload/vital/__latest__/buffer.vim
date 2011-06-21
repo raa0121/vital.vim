@@ -32,6 +32,16 @@ let s:__SID = s:__get_sid()
 delfunction s:__get_sid
 
 
+" Create proxy object for public functions.
+" TODO: Create vital proxy module.
+function! s:new(bufnr)
+    let obj = {}
+    for method in ['jump_to', 'call_in', 'append_lines', 'empty']
+        let obj[method] = s:Functor.curry(s:Functor.localfunc(method, s:__SID), a:bufnr)
+    endfor
+    return obj
+endfunction
+
 function! s:jump_to(...)
     return s:__eventignore_call(s:Functor.localfunc('__jump_to', s:__SID), a:000)
 endfunction
