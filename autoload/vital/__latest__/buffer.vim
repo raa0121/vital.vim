@@ -5,7 +5,10 @@ set cpo&vim
 
 
 
-let s:Functor = vital#of('vital').import('Functor')
+let s:Functor = {}
+function! s:_vital_loaded(V)
+    let s:Functor = a:V.import('Functor')
+endfunction
 
 
 " TODO: Move these functions to a module.
