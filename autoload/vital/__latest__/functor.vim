@@ -73,5 +73,24 @@ function! s:localfunc(funcname, sid)
     return function(printf('<SNR>%d_%s', a:sid, a:funcname))
 endfunction
 
+" Convert a:callable to Funcref.
+function! s:squash(callable)
+    if type(a:callable) ==# s:TYPE_FUNCREF
+        return a:callable
+    elseif type(a:callable) ==# s:TYPE_STRING
+        return function(a:callable)
+    elseif type(a:callable) ==# s:TYPE_DICT
+    \   && has_key(a:callable, 'do')
+        if type(a:callable.do) ==# s:TYPE_FUNCREF
+            return a:callable
+        elseif type(a:callable.do) ==# s:TYPE_STRING
+            return extend(a:callable, {
+            \   'do': function(a:callable),
+            \}, 'force')
+        endif
+    endif
+    throw 'vital: Functor.squash(): '
+    \   . 'a:callable is not callable!'
+endfunction
 
 let &cpo = s:save_cpo
