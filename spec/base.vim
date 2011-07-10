@@ -19,6 +19,23 @@ function! s:_should(it, cond)
   return eval(a:cond) ? '.' : a:it
 endfunction
 
+function! s:has_failed(results_value)
+    let failed = 'v:val !=# "."'
+    return !empty(filter(copy(a:results_value), failed))
+endfunction
+function! s:fin(cond)
+    " Write failed results only.
+    let failed = {}
+    for context in sort(keys(s:results))
+        if s:has_failed(s:results[context])
+            let failed[context] = s:results[context]
+        endif
+    endfor
+    " TODO: use PP() instead of string() if it is available.
+    call writefile([empty(failed) ? 'All tests were passed.' : string(failed)], a:cond)
+    qa!
+endfunction
+
 command! -nargs=+ Context
       \ call add(s:context_stack, ['c', <q-args>])
 command! -nargs=+ It
@@ -30,5 +47,4 @@ command! -nargs=0 End
       \ redraw!
 
 command! -nargs=+ Fin
-      \ call writefile([string(s:results)], <q-args>) |
-      \ qa!
+      \ call s:fin(<q-args>)
