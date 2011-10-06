@@ -2,7 +2,6 @@
 
 let s:save_cpo = &cpo
 set cpo&vim
-let s:V = vital#{expand('<sfile>:h:h:t:r')}#new()
 
 " Substitute a:from => a:to by string.
 " To substitute by pattern, use substitute() instead.
@@ -87,27 +86,27 @@ endfunction "}}}
 "
 " NOTE _concat() is just a copy of Data.List.concat().
 " FIXME don't repeat yourself
-function! s:_split_by_wcswitdh_once(body, x)
+function! s:_split_by_wcswitdh_once(V, body, x)
   return [
-        \ s:V.strwidthpart(a:body, a:x),
-        \ s:V.strwidthpart_reverse(a:body, s:V.wcswidth(a:body) - a:x)]
+        \ a:V.strwidthpart(a:body, a:x),
+        \ a:V.strwidthpart_reverse(a:body, a:V.wcswidth(a:body) - a:x)]
 endfunction
 
-function! s:_split_by_wcswitdh(body, x)
+function! s:_split_by_wcswitdh(V, body, x)
   let memo = []
   let body = a:body
-  while s:V.wcswidth(body) > a:x
-    let [tmp, body] = s:_split_by_wcswitdh_once(body, a:x)
+  while a:V.wcswidth(body) > a:x
+    let [tmp, body] = s:_split_by_wcswitdh_once(a:V, body, a:x)
     call add(memo, tmp)
   endwhile
   call add(memo, body)
   return memo
 endfunction
 
-function! s:wrap(str)
-  let L = s:V.import('Data.List')
+function! s:wrap(str) dict
+  let L = self.V.import('Data.List')
   return L.concat(
-        \ map(split(a:str, '\r\?\n'), 's:_split_by_wcswitdh(v:val, &columns - 1)'))
+        \ map(split(a:str, '\r\?\n'), 's:_split_by_wcswitdh(self.V, v:val, &columns - 1)'))
 endfunction
 
 

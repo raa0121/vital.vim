@@ -3,8 +3,8 @@ let s:self_version = expand('<sfile>:t:r')
 
 let s:loaded = {}
 
-function! s:import(name, ...)
-  let module = s:_import(a:name, s:_scripts())
+function! s:import(name, ...) dict
+  let module = s:_import(self, a:name, s:_scripts())
   if a:0 && type(a:1) == type({})
     call extend(a:1, module, 'keep')
   endif
@@ -29,15 +29,15 @@ function! s:load(...) dict
     endwhile
 
     if !empty(target) && !has_key(dict, target[0])
-      let dict[target[0]] = s:_import(name, scripts)
+      let dict[target[0]] = s:_import(self, name, scripts)
     endif
   endfor
   return self
 endfunction
 
-function! s:_import(name, scripts)
+function! s:_import(V, name, scripts)
   if type(a:name) == type(0)
-    return s:_build_module(a:name)
+    return s:_build_module(a:V, a:name)
   endif
   if a:name =~# '^[^A-Z]' || a:name =~# '\W[^A-Z]'
     throw 'vital: module name must start with capital letter: ' . a:name
@@ -55,7 +55,7 @@ function! s:_import(name, scripts)
     endtry
     let sid = len(a:scripts) + 1  " We expect that the file newly read is +1.
   endif
-  return s:_build_module(sid)
+  return s:_build_module(a:V, sid)
 endfunction
 
 function! s:_scripts()
@@ -73,7 +73,7 @@ function! s:_unify_path(path)
   return fnamemodify(resolve(a:path), ':p:gs?\\\+?/?')
 endfunction
 
-function! s:_build_module(sid)
+function! s:_build_module(V, sid)
   if has_key(s:loaded, a:sid)
     return copy(s:loaded[a:sid])
   endif
@@ -85,6 +85,7 @@ function! s:_build_module(sid)
   \          'matchstr(v:val, map_pat)')
 
   let module = {}
+  let module.V = a:V
   for func in functions
     let module[func] = function(prefix . func)
   endfor
@@ -108,7 +109,9 @@ function! s:_redir(cmd)
 endfunction
 
 function! vital#{s:self_version}#new()
-  let V = s:import('')
+  let V = {}
+  let V.import = function('s:import')
+  let V = V.import('')
   call V.import('Prelude', V)
   return V
 endfunction
