@@ -89,6 +89,11 @@ function! s:_build_module(V, sid)
   for func in functions
     let module[func] = function(prefix . func)
   endfor
+  if has_key(module, 'dependencies')
+    for d in module.dependencies()
+      call module.V.load(d)
+    endfor
+  endif
   if has_key(module, '_vital_loaded')
     try
       call module._vital_loaded(vital#{s:self_version}#new())

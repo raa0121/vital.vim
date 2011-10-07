@@ -3,6 +3,10 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+function! s:dependencies()
+  return ['Data.List']
+endfunction
+
 " Substitute a:from => a:to by string.
 " To substitute by pattern, use substitute() instead.
 " Test: https://gist.github.com/984296
@@ -104,7 +108,7 @@ function! s:_split_by_wcswitdh(V, body, x)
 endfunction
 
 function! s:wrap(str) dict
-  let L = self.V.import('Data.List')
+  let L = self.V.Data.List
   return L.concat(
         \ map(split(a:str, '\r\?\n'), 's:_split_by_wcswitdh(self.V, v:val, &columns - 1)'))
 endfunction
