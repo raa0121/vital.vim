@@ -89,8 +89,8 @@ function! s:_build_module(V, sid)
   for func in functions
     let module[func] = function(prefix . func)
   endfor
-  if has_key(module, 'dependencies')
-    for d in module.dependencies()
+  if has_key(module, '_dependencies')
+    for d in module._dependencies()
       call module.V.load(d)
     endfor
   endif

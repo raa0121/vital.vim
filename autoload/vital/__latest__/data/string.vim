@@ -3,7 +3,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:dependencies()
+function! s:_dependencies()
   return ['Data.List']
 endfunction
 
