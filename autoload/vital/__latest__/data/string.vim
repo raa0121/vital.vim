@@ -143,11 +143,7 @@ endfunction "}}}
 " wrap() and its internal functions
 " * _split_by_wcswitdh_once()
 " * _split_by_wcswitdh()
-" * _concat()
 " * wrap()
-"
-" NOTE _concat() is just a copy of Data.List.concat().
-" FIXME don't repeat yourself
 function! s:_split_by_wcswitdh_once(body, x)
   return [
         \ s:strwidthpart(a:body, a:x),
