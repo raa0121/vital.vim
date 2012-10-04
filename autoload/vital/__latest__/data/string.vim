@@ -4,8 +4,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! s:_vital_loaded(V)
-  let s:V = a:V
-  let s:L = s:V.import('Data.List')
+  let s:L = a:V.import('Data.List')
 endfunction
 
 function! s:_vital_depends()
