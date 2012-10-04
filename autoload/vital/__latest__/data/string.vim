@@ -281,7 +281,7 @@ function! s:strwidthpart_reverse(str, width)
   return ret
 endfunction
 
-if v:version >= 703
+if has('*strwidth')
   " Use builtin function.
   function! s:wcswidth(str)
     return strwidth(a:str)
