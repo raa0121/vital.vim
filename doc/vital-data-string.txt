@@ -67,5 +67,34 @@ nr2enc_char({charcode})			*Vital.Data.String.nr2enc_char()*
 nr2hex({nr})				*Vital.Data.String.nr2hex()*
 	Return hex string which has the number value {nr}.
 
+strchars({str})				*Vital.Data.String.strchars()*
+	Returns the number of character in {str}.  Not bytes.
+
+wcswidth({str})				*Vital.Data.String.wcswidth()*
+	TODO:
+
+chop({str})				*Vital.Data.String.chop()*
+	Removes the last character from {str}.
+
+wrap({str})				*Vital.Data.String.wrap()*
+	TODO:
+
+diffidx({a}, {b})			*Vital.Data.String.diffidx()*
+
+truncate({str}, {width})		*Vital.Data.String.truncate()*
+	TODO:
+
+					*Vital.Data.String.truncate_smart()*
+truncate_smart({str}, {max}, {footerwidth}, {separator})
+	TODO:
+
+strwidthpart({str}, {width})		*Vital.Data.String.strwidthpart()*
+	TODO:
+
+				*Vital.Data.String.strwidthpart_reverse()*
+strwidthpart_reverse({str}, {width})
+	TODO:
+
+
 ==============================================================================
 vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
