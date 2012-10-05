@@ -93,49 +93,6 @@ Context Prelude.is_dict()
 End
 "}}}
 
-Context Prelude.truncate()
-  It truncates not based on the number of letters but based on visual length
-    Should g:V.truncate('あいうえお', 2) ==# 'あ'
-  End
-End
-
-Context Prelude.truncate_smart()
-  It truncates similarly to Prelude.truncate() but shows a given letter in snip area
-    Should g:V.truncate_smart('this is a pen', 10, 1, '/') ==# 'this is /n'
-    Should g:V.truncate_smart('あいうえおかきくけこ.', 10, 1, '/') ==# 'あいうえ/.'
-  End
-End
-
-Context Prelude.strchars()
-  It counts the number of letters, not the number of bytes.
-    Should g:V.strchars('this') ==# 4
-    Should g:V.strchars('あいうえお') ==# 5
-  End
-End
-
-Context Prelude.strwidthpart()
-  It cuts a string to give width
-    Should g:V.strwidthpart('this is a pen', 5) ==# 'this '
-    Should g:V.strwidthpart('あいうえお', 5) ==# 'あい'
-  End
-  It returns an empty string by illegal width
-    Should g:V.strwidthpart('あいうえお', -1) ==# ''
-  End
-End
-
-Context Prelude.strwidthpart_reverse()
-  It cuts backward a string to give width
-    Should g:V.strwidthpart_reverse('this is a pen', 5) ==# 'a pen'
-    Should g:V.strwidthpart_reverse('あいうえお', 5) ==# 'えお'
-  End
-  It returns an empty string by illegal width
-    Should g:V.strwidthpart_reverse('あいうえお', -1) ==# ''
-  End
-End
-
-  "IS unite#util#wcswidth('this is a pen'), 13
-  "IS unite#util#wcswidth('あいうえお'), 10
-  "IS unite#util#is_win(), 0
 
 Context Prelude.print_error()
   It prints error message

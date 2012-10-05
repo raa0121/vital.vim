@@ -165,3 +165,43 @@ Context Data.String.diffidx()
     Should g:S.diffidx('▽', '▼') ==# 0
   End
 End
+
+Context Data.String.truncate()
+  It truncates not based on the number of letters but based on visual length
+    Should g:S.truncate('あいうえお', 2) ==# 'あ'
+  End
+End
+
+Context Data.String.truncate_smart()
+  It truncates similarly to Data.String.truncate() but shows a given letter in snip area
+    Should g:S.truncate_smart('this is a pen', 10, 1, '/') ==# 'this is /n'
+    Should g:S.truncate_smart('あいうえおかきくけこ.', 10, 1, '/') ==# 'あいうえ/.'
+  End
+End
+
+Context Data.String.strchars()
+  It counts the number of letters, not the number of bytes.
+    Should g:S.strchars('this') ==# 4
+    Should g:S.strchars('あいうえお') ==# 5
+  End
+End
+
+Context Data.String.strwidthpart()
+  It cuts a string to give width
+    Should g:S.strwidthpart('this is a pen', 5) ==# 'this '
+    Should g:S.strwidthpart('あいうえお', 5) ==# 'あい'
+  End
+  It returns an empty string by illegal width
+    Should g:S.strwidthpart('あいうえお', -1) ==# ''
+  End
+End
+
+Context Data.String.strwidthpart_reverse()
+  It cuts backward a string to give width
+    Should g:S.strwidthpart_reverse('this is a pen', 5) ==# 'a pen'
+    Should g:S.strwidthpart_reverse('あいうえお', 5) ==# 'えお'
+  End
+  It returns an empty string by illegal width
+    Should g:S.strwidthpart_reverse('あいうえお', -1) ==# ''
+  End
+End
