@@ -54,14 +54,22 @@ function! s:query_rawdata(db, q, ...)
   if 1
     let label = printf('vital-sqlite3-%s', a:db)
     let t = s:PM.touch(
-          \ label, printf('sqlite3 %s', s:_quote_escape(a:db)))
+          \ label, printf('sqlite3 -line %s', s:_quote_escape(a:db)))
     if t ==# 'new'
-      let m = s:PM.read_wait(label, 1.0, ['sqlite> '])
+      let m = s:PM.read(label, ['sqlite> '])
     endif
     call s:PM.writeln(label, built)
-    let result = s:PM.read_wait(label, 2.0, ['sqlite> '])
-    echomsg string(result)
-    return result[0]
+    let memo = ''
+    while 1
+      let [out, err, t] = s:PM.read(label, ['sqlite> '])
+      if t ==# 'matched'
+        return memo . out
+      else
+        let memo .= out
+        sleep
+        echo 'retry'
+      endif
+    endwhile
   else
     let cmd = printf(
           \ 'sqlite3 -line %s %s',
