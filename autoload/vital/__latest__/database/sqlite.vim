@@ -54,9 +54,9 @@ function! s:query_rawdata(db, q, ...)
   if 1
     let label = printf('vital-sqlite3-%s', a:db)
     let t = s:PM.touch(
-          \ label, printf('sqlite3 -line %s', s:_quote_escape(a:db)))
+          \ label, printf('sqlite3 -interactive -line %s', s:_quote_escape(a:db)))
     if t ==# 'new'
-      let m = s:PM.read(label, ['sqlite> '])
+      let m = s:PM.read(label, ['\(\e[?1034h\)\?sqlite> '])
     endif
     call s:PM.writeln(label, built)
     let memo = ''
@@ -67,7 +67,7 @@ function! s:query_rawdata(db, q, ...)
       else
         let memo .= out
         sleep
-        echo 'retry'
+        echo ['retry', out]
       endif
     endwhile
   else
