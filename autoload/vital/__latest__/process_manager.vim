@@ -52,12 +52,17 @@ function! s:read_wait(i, wait, endpatterns)
   if s:status(a:i) ==# 'inactive'
     return ['', '', 'inactive']
   endif
+  return s:read_wait_unsafe(a:i, a:wait, a:endpatterns)
+endfunction
 
+function! s:read_wait_unsafe(i, wait, endpatterns)
   let p = s:_processes[a:i]
   let out_memo = ''
   let err_memo = ''
   let lastchanged = reltime()
+  let counter = 0
   while 1
+    let counter += 1
     let [x, y] = [p.stdout.read(), p.stderr.read()]
     if x ==# '' && y ==# ''
       if str2float(reltimestr(reltime(lastchanged))) > a:wait
@@ -69,6 +74,7 @@ function! s:read_wait(i, wait, endpatterns)
       let err_memo .= y
       for pattern in a:endpatterns
         if out_memo =~ ("\\(^\\|\n\\)" . pattern)
+          echo ['counter', counter]
           return [s:S.substitute_last(out_memo, pattern, ''), err_memo, 'matched']
         endif
       endfor

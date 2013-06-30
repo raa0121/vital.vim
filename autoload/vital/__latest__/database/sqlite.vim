@@ -52,22 +52,28 @@ function! s:query_rawdata(db, q, ...)
   " endif
   let built = s:build_line_from_query_with_placeholders(a:q, a:000)
   if 1
+    let time = reltime()
     let label = printf('vital-sqlite3-%s', a:db)
+    let term = $TERM
+    let $TERM = 'dumb'
     let t = s:PM.touch(
           \ label, printf('sqlite3 -interactive -line %s', s:_quote_escape(a:db)))
+    let $TERM = term
     if t ==# 'new'
-      let m = s:PM.read(label, ['\(\e[?1034h\)\?sqlite> '])
+      " \(\e[?1034h\)\?
+      let m = s:PM.read_wait(label, 0.001, ['sqlite> '])
     endif
     call s:PM.writeln(label, built)
+    echo [reltimestr(reltime(time))]
     let memo = ''
     while 1
-      let [out, err, t] = s:PM.read(label, ['sqlite> '])
+      echo [reltimestr(reltime(time))]
+      let [out, err, t] = s:PM.read_wait_unsafe(label, 0.001, ['sqlite> '])
       if t ==# 'matched'
+        echo [reltimestr(reltime(time))]
         return memo . out
       else
         let memo .= out
-        sleep
-        echo ['retry', out]
       endif
     endwhile
   else
