@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:bionic
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run: sudo apt update && sudo apt install vim-nox && vim --version
+      - run: sudo sed -e 's/# ja_JP.UTF-8/ja_JP.UTF-8/' -i /etc/locale.gen && sudo locale-gen
+      - run: git clone --depth 1 --branch v1.5.4 --single-branch https://github.com/thinca/vim-themis /tmp/vim-themis
+      - run: git clone --depth 1 https://github.com/Shougo/vimproc.vim /tmp/vimproc
+      - run: (cd /tmp/vimproc && make)
+      - run: LANG=ja_JP.UTF-8 /tmp/vim-themis/bin/themis --runtimepath /tmp/vimproc --exclude ConcurrentProcess --reporter dot
