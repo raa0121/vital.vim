@@ -13,7 +13,7 @@ _test-body: &test-body
     - checkout
     - run: 
         name: install deps
-        command: sudo apk add git gcc make
+        command: apk add git gcc make
     - run:
         name: install themis
         command: git clone --depth 1 --branch v1.5.4 --single-branch https://github.com/thinca/vim-themis /tmp/vim-themis
